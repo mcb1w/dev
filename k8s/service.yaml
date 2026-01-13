@@ -2,11 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dev-go-app
+  labels:
+    app: dev-go-app
 spec:
+  type: ClusterIP
   selector:
     app: dev-go-app
   ports:
-    - protocol: TCP
+    - name: http
       port: 80
       targetPort: 8080
-  type: ClusterIP
+      protocol: TCP
