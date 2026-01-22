@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dev-go-app-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: dev-go-app.rules
+      rules:
+        - alert: DevGoAppUnavailable
+          expr: |
+            (
+              kube_deployment_status_replicas_available{deployment="dev-go-app", namespace="default"} == 0
+            )
+            OR
+            absent(kube_deployment_status_replicas_available{deployment="dev-go-app", namespace="default"})
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "dev-go-app is unavailable"
+            description: "Deployment dev-go-app has zero available replicas or metrics are missing"
